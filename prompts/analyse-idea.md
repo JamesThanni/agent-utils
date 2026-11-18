@@ -1,119 +1,151 @@
-# Project Spec Builder
+# Idea Analysis
 
-Turn a braindump into a structured project requirements specification.
+Convert idea intent documents into structured project requirements specs ready for engineering handoff.
 
-<HARD-GATE>
-Do NOT generate the spec until you have interviewed the user relentlessly (one question at a time, with a recommended answer for each, exploring the codebase instead of asking wherever possible) and reached sufficient understanding of the project. Your ONLY output after grilling is the spec document — no summaries, commentary, or content outside the spec structure. Speak telegraphically while thinking: drop filler, articles, and pleasantries while keeping full technical accuracy.
-</HARD-GATE>
+---
 
-## Quick Start
-
-When the user provides a braindump:
-
-1. Parse it to extract all available context
-2. Ask up to **3 targeted clarifying questions** (one at a time) for any critical gaps — skip questions you can reasonably infer
-3. Generate the full specification
-4. Ask: save as `app-specification.md` or output as markdown?
-
-If the braindump is detailed enough, skip straight to generation.
-
-## Clarifying Question Priority
-
-Only ask if genuinely unknown and important:
-
-- **Who** are the users and what are their roles/permissions?
-- **What** is the primary success metric (what does "done" look like)?
-- **Stack** — any constraints on tech stack, integrations, or platform?
-
-Never ask more than 3 questions. Make reasonable assumptions for anything else and state them in the spec.
-
-## Output Format
-
-Generate the spec using **exactly** these sections in order:
-
-```markdown
-# Summary
-
-State the project purpose, key objectives, and high-level description. Identify key stakeholders (developers, PMs, clients, end users).
-
-# Users
-
-Define user types and roles. Describe the access control model and what each role can do.
-
-# Requirements
-
-## Functional Requirements
-
-Core features and expected behaviours.
-
-## Non-Functional Requirements
-
-Performance, scalability, security, and usability considerations.
-
-# Designs
-
-UI/UX considerations, wireframe descriptions or layout notes, and expected user flow.
-
-# Technical Specifications
-
-## Architecture Overview
-
-Key components and how they interact.
-
-## Technology Stack
-
-Languages, frameworks, databases, and services.
-
-## API Design _(if applicable)_
-
-Endpoints, data flow, and integration points.
-
-## Database Schema _(if applicable)_
-
-Proposed schema or data model.
-
-# Development Plan
-
-## Epics & User Stories
-
-Exactly 4 core epics — one must be an AI feature epic, one must be a user management epic.
-
-## Post-Launch Epics
-
-Future work outside the initial scope for other standout features and necessary modernisation/fixes.
-
-# Testing Plan
-
-Testing strategy covering unit, integration, end-to-end, and UAT. Include key test cases and user scenarios.
-
-# Questions
-
-Clarifying questions grouped by category:
-
-- **Scope & Objectives** — alignment with stakeholder needs
-- **Functional** — system capabilities and behaviours
-- **Non-Functional** — performance, security, scalability
-- **Technical** — architecture, integrations, implementation choices
-- **Risks & Constraints** — limitations, dependencies, feasibility
-
-# Appendices & References
-
-Glossary of terms, external references, and supporting documentation.
-```
-
-## Rules
+## Soft Rules
 
 - **Assumptions block**: Open every spec with a brief `> **Assumptions:** ...` blockquote listing inferred decisions so the user can correct them.
-- **No placeholders**: Fill every section. If something is genuinely unknown, note it as a question in the Questions section — don't write "TBD".
-- **POC development plan**: Always 4 epics for a POC — AI feature epic + user management epic mandatory. Add post-launch epics after.
+
+- **No placeholders**: Fill every section completely. If unknown, document as a question — never write "TBD".
+
+- **Policy alignment**: Call out explicitly where existing code style, security policies, or brand guidelines apply. Describe any conflicts in "Areas of Concern."
+
 - **Depth scales with complexity**: Simple projects get concise sections; complex ones get detail where it matters.
-- **YAGNI**: Don't invent features not mentioned or implied by the braindump.
-- **Reduce token usage**: Speak telegraphically when thinking to help reduce the user's token usage.
 
-## Saving the Output
+- **YAGNI**: Don't invent features not mentioned or implied by the intent document.
 
-After generating, ask:
+- **POC development plan**: Always 4 epics — AI feature + user management mandatory. Add post-launch epics after.
 
-> "Want me to save this as `app-spec.md` in the project root, or keep it as a markdown response?"
+- **Reduce token usage**: Speak concisely when thinking. This helps the user's token budget. However, when adding notes to markdown files, writing them out in full English.
 
-If saving: write to `app-spec.md` at the current working directory root.
+- **Code-aware**: Reference existing services, models, APIs by name. Show how the spec integrates with what's already there.
+
+## Hard Rules
+- Do NOT generate the spec until you have:
+  1. Read any attached intent.md or project documentation or idea notes
+  2. Explored the codebase, if there is one, for existing context (stack, architecture, conventions)
+  3. Interviewed the user enough (one question at a time) until sufficient understanding is reached
+
+- Your ONLY output after the hard-gate is the spec document — no summaries, commentary, or content outside the spec structure.
+
+- Speak concisely: drop filler, articles, and pleasantries while keeping full technical accuracy.
+
+
+## Workflow
+
+### Step 1: Parse & Explore
+
+Extract available context from the intent document:
+
+- Read attached intent.md if provided
+- Explore codebase instead of asking: stack, architecture, existing integrations, conventions
+- Identify gaps requiring user input
+
+### Step 2: Interview
+
+Ask **up to 3 targeted clarifying questions** (one at a time, with a recommended answer).
+
+Skip questions you can reasonably infer from code/docs. Only ask if genuinely unknown and important.
+
+**Priority order:**
+
+- **Users** — roles, permissions, access control model?
+- **Success metric** — what does "done" look like? Primary objective?
+- **Constraints** — tech stack, integrations, compliance, timeline?
+
+### Step 3: Generate Spec
+
+Output full spec using the structure below. No TBD placeholders — unknown items go in Questions section.
+
+### Step 4: Save
+
+Ask: "Save as `spec.md` in project root, or output as markdown?"
+
+---
+
+## Spec Output Format
+
+```markdown
+# Spec: [Feature Name]
+
+From: intent.md (Author, Role). Status: [draft|ready for review|approved].
+Skills applied: [list of applicable company skills].
+
+> **Assumptions:** [List inferred decisions the user can correct. E.g., "Existing MongoDB schema unchanged," "No new user roles," "60-second cache is acceptable latency."]
+
+## Summary
+
+Project purpose, key objectives, high-level description in 1–2 paragraphs. Identify stakeholders.
+
+## Requirements
+
+Numbered, concise functional + non-functional requirements. Format: `Rn. [Description].`
+
+**Functional:**
+
+- R1. [Core behaviour]
+- R2. [Core behaviour]
+- R3. [Integration or constraint]
+
+**Non-Functional:**
+
+- R4. [Performance/security/compliance]
+- R5. [Scalability/usability]
+
+## Design
+
+Wireframe descriptions, UI/UX flow, component layout. How it aligns with existing brand guidelines and company standards.
+
+**Architecture:**
+
+- New/modified API endpoints with methods and paths
+- Data flow: which services read/write where
+- Frontend components and their state
+
+## How Each Constraint Is Met
+
+For each constraint, use this format of subheadings and list the corresponding details beneath them:
+'''
+### Constraint (from intent)
+
+- [Requirement Number] -  Solution that satisfies it
+
+### Notes
+
+- [Brief explanation of each solution]
+
+'''
+
+## Open Questions from the Intent
+
+- Q1. [Question not answered by the intent document]. Not addressed. Carried forward as concern.
+- Q2. [Question]. Assumed [answer]. Confirm?
+
+## Areas of Concern
+
+Explicit list of risks, contradictions, feasibility risks, or policy conflicts that cannot be resolved without further input. **Assign an owner for each.**
+
+1. [Description]. Breaks [constraint/requirement]. Workaround: [proposal]. **Owner:** [team/role].
+2. [Description]. May impact [area]. Requires [input/approval]. **Owner:** [team/role].
+3. [Description]. Feasibility risk. Needs load testing or design review. **Owner:** [team/role].
+
+## Testing Plan
+
+Testing strategy: unit, integration, end-to-end, UAT. Key scenarios and acceptance tests.
+
+## Appendices & References
+
+Glossary, external references, company frameworks.
+```
+
+---
+
+## Tips for Effective Interviewing
+
+- **Explore before asking**: Search codebase, docs, README for answers about stack, architecture, existing patterns.
+- **Ask one at a time**: Each question should be specific and have a recommended answer.
+- **Listen for scope creep**: User's answer to one question often informs the others — stop early if patterns emerge.
+- **Call out assumptions**: After each answer, reflect back: "So you're saying [X]?" to confirm.
+- **End decisively**: Once you have critical inputs, stop — don't over-interview. Move to spec generation.
